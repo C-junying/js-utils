@@ -6,27 +6,24 @@ const dirPath = 'd:/temp_temp_temp';
 
 // 1-文件 2-目录 3-文件和目录
 const flag = 1;
-// 将文件名的 'oldName' 替换成 'newName'
-const oldName = 'oldName';
-const newName = 'newName';
+// 将文件名存在 'name' 的文件删除
+const name = /name/;
 
-batchRenameFiles();
+batchDelFiles();
 
-function renameFile(filePath, file) {
-  // 获取新文件名
-  const newFileName = file.replace(oldName, newName);
-  // 拼接新路径
-  const newFilePath = path.join(dirPath, newFileName);
-  fs.rename(filePath, newFilePath, (err) => {
-    if (err) {
-      console.error('重命名文件失败：', err);
-    } else {
-      console.log('成功重命名文件：', filePath, '->', newFilePath);
-    }
-  });
+function delFile(filePath, file) {
+  if (name.test(file)) {
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error('删除文件失败', err);
+      } else {
+        console.log('成功删除文件：', filePath);
+      }
+    });
+  }
 }
 
-function batchRenameFiles() {
+function batchDelFiles() {
   fs.readdir(dirPath, (err, files) => {
     if (err) {
       console.error('读取目录失败：', err);
@@ -43,13 +40,13 @@ function batchRenameFiles() {
         }
 
         if (flag === 1 && stats.isFile()) {
-          renameFile(filePath, file);
+          delFile(filePath, file);
         }
         if (flag === 2 && stats.isDirectory()) {
-          renameFile(filePath, file);
+          delFile(filePath, file);
         }
         if (flag === 3) {
-          renameFile(filePath, file);
+          delFile(filePath, file);
         }
       });
     });
